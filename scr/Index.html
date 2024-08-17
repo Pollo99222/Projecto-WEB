@@ -1,0 +1,176 @@
+Dijiste:
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tareas</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5" id="loginSection">
+        <h2 class="text-center">Inicio de Sesión</h2>
+        <div class="form-group">
+            <label for="username">Usuario:</label>
+            <input type="text" class="form-control" id="username" placeholder="Ingresa tu usuario">
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="login()">Iniciar Sesión</button>
+        <div id="loginError" class="text-danger mt-3" style="display: none;">Credenciales incorrectas. Intenta de nuevo.</div>
+    </div>
+
+    <div class="container mt-5" id="appSection" style="display: none;">
+        <!-- Sección de perfil de usuario -->
+        
+        <div id="userProfile" class="mb-4" >
+            <h3 align="text-center">Bienvenido, <span id="userName"></span></h3>
+        </div>
+
+        <!-- Sección para registrar una nueva tarea -->
+        <div id="taskFormSection">
+            <h4>Registrar Nueva Tarea</h4>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="taskId">Código de la tarea (id):</label>
+                    <input type="text" class="form-control" id="taskId" placeholder="Ingrese el código de la tarea">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="taskTitle">Título de la tarea:</label>
+                    <input type="text" class="form-control" id="taskTitle" placeholder="Ingrese el título de la tarea">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="taskDescription">Descripción de la tarea:</label>
+                    <input type="text" class="form-control" id="taskDescription" placeholder="Ingrese la descripción de la tarea">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="startDate">Fecha de inicio:</label>
+                    <input type="date" class="form-control" id="startDate">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="clientName">Nombre del cliente:</label>
+                    <input type="text" class="form-control" id="clientName" placeholder="Ingrese el nombre del cliente">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="projectId">Id del proyecto:</label>
+                    <input type="text" class="form-control" id="projectId" placeholder="Ingrese el id del proyecto">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="comments">Comentarios:</label>
+                    <textarea class="form-control" id="comments" placeholder="Ingrese comentarios"></textarea>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="status">Estatus:</label>
+                    <select class="form-control" id="status">
+                        <option value="Por hacer" selected>Por hacer</option>
+                        <option value="En progreso">En progreso</option>
+                        <option value="Rechazado">Rechazado</option>
+                        <option value="Cancelado">Cancelado</option>
+                        <option value="Cerrado">Cerrado</option>
+                        <option value="En pruebas de calidad">En pruebas de calidad</option>
+                        <option value="En validación por el usuario">En validación por el usuario</option>
+                        <option value="En proceso de liberación">En proceso de liberación</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="addTask()">Agregar Tarea</button>
+        </div>
+
+        <!-- Sección para mostrar tareas registradas -->
+        <div class="mt-4">
+            <h4>Tareas Registradas</h4>
+            <div class="form-group col-md-4">
+                <label for="filterStatus">Filtrar por estatus:</label>
+                <select class="form-control" id="filterStatus" onchange="filterTasks()">
+                    <option value="Todos">Todos</option>
+                    <option value="Por hacer">Por hacer</option>
+                    <option value="En progreso">En progreso</option>
+                    <option value="Rechazado">Rechazado</option>
+                    <option value="Cancelado">Cancelado</option>
+                    <option value="Cerrado">Cerrado</option>
+                    <option value="En pruebas de calidad">En pruebas de calidad</option>
+                    <option value="En validación por el usuario">En validación por el usuario</option>
+                    <option value="En proceso de liberación">En proceso de liberación</option>
+                </select>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Fecha de Inicio</th>
+                        <th>Cliente</th>
+                        <th>Id Proyecto</th>
+                        <th>Comentarios</th>
+                        <th>Estatus</th>
+                    </tr>
+                </thead>
+                <tbody id="taskTableBody">
+                    <!-- Aquí se insertarán las tareas registradas -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sección de cambios de tareas -->
+        <div class="mt-4">
+            <h4>Modificar Tarea Seleccionada</h4>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="selectedTaskId">Código de la tarea:</label>
+                    <input type="text" class="form-control" id="selectedTaskId" disabled>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="selectedTaskTitle">Título de la tarea:</label>
+                    <input type="text" class="form-control" id="selectedTaskTitle" disabled>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="selectedTaskDescription">Descripción de la tarea:</label>
+                    <input type="text" class="form-control" id="selectedTaskDescription" disabled>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="selectedStartDate">Fecha de inicio:</label>
+                    <input type="date" class="form-control" id="selectedStartDate" disabled>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="selectedClientName">Nombre del cliente:</label>
+                    <input type="text" class="form-control" id="selectedClientName" disabled>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="selectedProjectId">Id del proyecto:</label>
+                    <input type="text" class="form-control" id="selectedProjectId" disabled>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="selectedComments">Comentarios:</label>
+                    <textarea class="form-control" id="selectedComments" disabled></textarea>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="selectedStatus">Estatus:</label>
+                    <select class="form-control" id="selectedStatus">
+                        <option value="Por hacer">Por hacer</option>
+                        <option value="En progreso">En progreso</option>
+                        <option value="Rechazado">Rechazado</option>
+                        <option value="Cancelado">Cancelado</option>
+                        <option value="Cerrado">Cerrado</option>
+                        <option value="En pruebas de calidad">En pruebas de calidad</option>
+                        <option value="En validación por el usuario">En validación por el usuario</option>
+                        <option value="En proceso de liberación">En proceso de liberación</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="newComment">Nuevo comentario:</label>
+                    <textarea class="form-control" id="newComment" placeholder="Ingrese un nuevo comentario"></textarea>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="updateTask()">Actualizar Tarea</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</body>
+</html>
